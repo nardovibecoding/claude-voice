@@ -9,6 +9,8 @@
 [![Groq](https://img.shields.io/badge/Groq-Whisper_STT-F55036?style=for-the-badge)](https://console.groq.com)
 [![License](https://img.shields.io/badge/License-AGPL--3.0-blue?style=for-the-badge)](LICENSE)
 
+<img src="demo.gif" alt="Voice daemon detecting wake word, transcribing speech, sending to Claude Code" width="700">
+
 </div>
 
 ---

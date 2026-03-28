@@ -17,12 +17,25 @@
 
 ## Install
 
+One command. Takes 30 seconds.
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/nardovibecoding/claude-voice/main/install.sh | bash
+```
+
+Installs dependencies, prompts for Groq API key, configures TTS hook in `~/.claude/settings.json`.
+
+<details>
+<summary>Manual install</summary>
+
 ```bash
 git clone https://github.com/nardovibecoding/claude-voice.git
 cd claude-voice
 pip install groq sounddevice numpy pynput rumps
 export GROQ_API_KEY="your-key-here"
 ```
+
+</details>
 
 ## Run
 

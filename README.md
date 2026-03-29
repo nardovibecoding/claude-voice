@@ -15,6 +15,8 @@
 
 ---
 
+Typing context into Claude interrupts thinking. Sometimes you just want to talk through a problem and hear an answer back — hands free, screen optional.
+
 ## Install
 
 One command. Takes 30 seconds.

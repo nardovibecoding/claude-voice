@@ -58,6 +58,7 @@ import subprocess
 import tempfile
 import time
 import sys
+from pathlib import Path
 
 import numpy as np
 import sounddevice as sd
@@ -751,8 +752,24 @@ def watchdog():
             volume_ticks[0] = 0
 
 
+def _launch_indicator():
+    """Auto-launch the menubar indicator if available."""
+    indicator = Path(__file__).parent / "recording_indicator.py"
+    if not indicator.exists():
+        return
+    try:
+        subprocess.Popen(
+            [sys.executable, str(indicator)],
+            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+        )
+        print("Menubar indicator launched.", flush=True)
+    except Exception as e:
+        print(f"Indicator launch failed: {e}", flush=True)
+
+
 def main():
     global _transcribe_cancelled
+    _launch_indicator()
     _start_persistent_stream()  # One stream for both VAD and manual
     listener = keyboard.Listener(on_press=on_press, on_release=on_release)
     listener.start()

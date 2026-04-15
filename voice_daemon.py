@@ -135,7 +135,7 @@ VAD_SILENCE_TIMEOUT_FRAMES = 50  # ~1.5s at 30ms/frame
 VAD_MIN_SPEECH_FRAMES = 8  # ~240ms minimum continuous speech to trigger
 
 # ── Wake word state ──────────────────────────────────────────────────────────
-_wake_word_active = False  # toggled via Right Shift cycle
+_wake_word_active = False  # toggled via Right Cmd cycle
 _wake_word_triggered = False
 _wake_word_chunks = []
 _wake_word_silence_count = 0
@@ -619,11 +619,12 @@ def reset_state():
 def on_press(key):
     global _pressed, _shift_held, _last_interrupt_time, _last_release_time
     try:
-        if key in (keyboard.Key.shift, keyboard.Key.shift_r):
+        if key == keyboard.Key.shift:
             _shift_held = True
-            if recording and key == keyboard.Key.shift:
+            if recording:
                 cancel_recording()
-            elif key == keyboard.Key.shift_r and not recording:
+        elif key == keyboard.Key.cmd_r:
+            if not recording:
                 # Toggle mode: OFF → VAD → WAKE_WORD → OFF (or OFF → VAD → OFF if no wake word)
                 global _vad_enabled, _wake_word_active
                 if _vad_enabled and not _wake_word_active:
@@ -667,14 +668,6 @@ def on_press(key):
                         pass
                     mode = "🟢 VAD自动"
                 print(f"  切换模式: {mode}", flush=True)
-        elif key == keyboard.Key.cmd_r:
-            if os.path.exists(MUTE_FLAG):
-                os.unlink(MUTE_FLAG)
-                print("  🔊 Unmuted", flush=True)
-            else:
-                open(MUTE_FLAG, "w").close()
-                interrupt_tts()  # stop any ongoing TTS immediately
-                print("  🔇 Muted + TTS stopped", flush=True)
         elif key in (keyboard.Key.cmd_l, keyboard.Key.alt):
             now = time.time()
             if now - _last_interrupt_time > 1.0:
@@ -692,7 +685,7 @@ def on_press(key):
 def on_release(key):
     global _pressed, _shift_held, _last_release_time
     try:
-        if key in (keyboard.Key.shift, keyboard.Key.shift_r):
+        if key == keyboard.Key.shift:
             _shift_held = False
         elif key in TRIGGER_KEYS:
             _pressed = False

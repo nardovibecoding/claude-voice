@@ -1,8 +1,8 @@
 <div align="center">
 
-# claude-voice
+# simply-voice
 
-**Hands-free voice I/O for Claude Code — speak naturally, hear responses.**
+**Hands-free local voice I/O for Claude Code.**
 
 [![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux-lightgrey?style=for-the-badge)](#)
@@ -15,26 +15,33 @@
 
 ---
 
-Typing context into Claude interrupts thinking. Sometimes you just want to talk through a problem and hear an answer back — hands free, screen optional.
+## Problem
+
+Typing context into Claude interrupts thinking. Sometimes you want to talk
+through a problem and hear an answer back, hands free and screen optional.
+
+This template adds local voice input and spoken output around Claude Code
+without publishing a private automation stack.
 
 ## Install
 
 One command. Takes 30 seconds.
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/nardovibecoding/claude-voice/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/nardovibecoding/simply-voice/main/install.sh | bash
 ```
 
-Installs dependencies, prompts for Groq API key, configures TTS hook in `~/.claude/settings.json`.
+Installs dependencies, optionally saves a Groq API key to your shell profile,
+and configures a reversible TTS hook in `~/.claude/settings.json`.
 
 <details>
 <summary>Manual install</summary>
 
 ```bash
-git clone https://github.com/nardovibecoding/claude-voice.git
-cd claude-voice
+git clone https://github.com/nardovibecoding/simply-voice.git
+cd simply-voice
 pip install groq sounddevice numpy pynput rumps
-export GROQ_API_KEY="your-key-here"
+export GROQ_API_KEY="gsk_FAKE_GROQ_KEY_FOR_LOCAL_TESTS"
 ```
 
 </details>
@@ -54,7 +61,7 @@ claude
 ```bash
 # ~/.zshrc
 claude() {
-    python ~/claude-voice/voice_daemon.py &
+    python ~/simply-voice/voice_daemon.py &
     command claude "$@"
     kill %1 2>/dev/null
 }
@@ -184,7 +191,7 @@ All settings are environment variables — no config file needed.
 
 | Variable | Default | Description |
 |---|---|---|
-| `GROQ_API_KEY` | *(required)* | Groq API key for Whisper transcription |
+| `GROQ_API_KEY` | *(required)* | Groq API key for Whisper transcription; use `.env.example` for placeholder format |
 | `STT_ENGINE` | `groq` | STT backend: `groq`, `google`, `apple`, or `whisper` (local) |
 | `STT_LANGUAGE` | *(empty)* | Force transcription language (e.g. `zh`, `en`). Empty = auto-detect |
 | `TTS_VOICE` | `zh-HK-HiuMaanNeural` | Edge TTS voice name for spoken responses |
@@ -200,20 +207,22 @@ All settings are environment variables — no config file needed.
 ## File Structure
 
 ```
-claude-voice/
+simply-voice/
 ├── voice_daemon.py          # Core: VAD loop, STT, keyboard injection (540 lines)
 ├── speak_hook.py            # TTS: Claude Code stop-hook — speaks the last response
 ├── recording_indicator.py   # Menubar: rumps app showing live recording state
 └── toggle_mute.sh           # Helper: toggle /tmp/tts_muted flag file
 ```
 
-**`speak_hook.py`** is designed to run as a Claude Code [stop hook](https://docs.anthropic.com/en/docs/claude-code/hooks) — it fires automatically after each Claude response and reads it aloud.
+**`speak_hook.py`** is designed to run as a Claude Code stop hook. The installer
+adds one hook entry marked with `simply-voice`; remove that entry from
+`~/.claude/settings.json` to reverse it.
 
 ---
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=nardovibecoding/claude-voice&type=Date)](https://star-history.com/#nardovibecoding/claude-voice&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=nardovibecoding/simply-voice&type=Date)](https://star-history.com/#nardovibecoding/simply-voice&Date)
 
 ---
 

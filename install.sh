@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Claude Voice — one-liner installer
-# curl -fsSL https://raw.githubusercontent.com/nardovibecoding/claude-voice/main/install.sh | bash
+# Simply Voice — one-liner installer
+# curl -fsSL https://raw.githubusercontent.com/nardovibecoding/simply-voice/main/install.sh | bash
 set -euo pipefail
 
-INSTALL_DIR="$HOME/claude-voice"
+INSTALL_DIR="$HOME/simply-voice"
 SETTINGS="$HOME/.claude/settings.json"
 
 RED='\033[0;31m' GREEN='\033[0;32m' YELLOW='\033[1;33m' CYAN='\033[0;36m' BOLD='\033[1m' NC='\033[0m'
@@ -11,7 +11,7 @@ RED='\033[0;31m' GREEN='\033[0;32m' YELLOW='\033[1;33m' CYAN='\033[0;36m' BOLD='
 echo ""
 echo -e "${CYAN}${BOLD}"
 echo "  ╔═══════════════════════════════════╗"
-echo "  ║   Claude Voice Installer           ║"
+echo "  ║   Simply Voice Installer           ║"
 echo "  ║   TTS + STT for Claude Code        ║"
 echo "  ╚═══════════════════════════════════╝"
 echo -e "${NC}"
@@ -32,7 +32,7 @@ else
     exit 1
   fi
   echo -e "${GREEN}→ Cloning repository...${NC}"
-  git clone https://github.com/nardovibecoding/claude-voice.git "$INSTALL_DIR"
+  git clone https://github.com/nardovibecoding/simply-voice.git "$INSTALL_DIR"
 fi
 
 # --- Install dependencies ---
@@ -53,12 +53,14 @@ fi
 echo ""
 read -rp "Groq API key (for STT, get one at console.groq.com): " GROQ_KEY
 if [ -n "$GROQ_KEY" ]; then
-  # Save to shell profile
-  PROFILE="$HOME/.zshrc"
-  [ -f "$HOME/.bash_profile" ] && PROFILE="$HOME/.bash_profile"
-  if ! grep -q "GROQ_API_KEY" "$PROFILE" 2>/dev/null; then
-    echo "export GROQ_API_KEY=\"$GROQ_KEY\"" >> "$PROFILE"
-    echo -e "  ${GREEN}Added GROQ_API_KEY to $PROFILE${NC}"
+  read -rp "Save GROQ_API_KEY to your shell profile? Type SAVE to enable [session only]: " SAVE_KEY_REPLY
+  if [ "$SAVE_KEY_REPLY" = "SAVE" ]; then
+    PROFILE="$HOME/.zshrc"
+    [ -f "$HOME/.bash_profile" ] && PROFILE="$HOME/.bash_profile"
+    if ! grep -q "GROQ_API_KEY" "$PROFILE" 2>/dev/null; then
+      echo "export GROQ_API_KEY=\"$GROQ_KEY\"" >> "$PROFILE"
+      echo -e "  ${GREEN}Added GROQ_API_KEY to $PROFILE${NC}"
+    fi
   fi
   export GROQ_API_KEY="$GROQ_KEY"
 fi
@@ -70,7 +72,7 @@ mkdir -p "$HOME/.claude"
 python3 << 'PYEOF'
 import json, os
 
-INSTALL_DIR = os.path.expanduser("~/claude-voice")
+INSTALL_DIR = os.path.expanduser("~/simply-voice")
 SETTINGS = os.path.expanduser("~/.claude/settings.json")
 
 if os.path.exists(SETTINGS):
@@ -80,7 +82,7 @@ else:
     settings = {}
 
 hooks = settings.setdefault("hooks", {})
-MARKER = "claude-voice"
+MARKER = "simply-voice"
 
 # TTS hook fires after every Claude response
 stop_hooks = hooks.setdefault("Stop", [])
@@ -98,14 +100,14 @@ PYEOF
 
 # --- Done ---
 echo ""
-echo -e "${GREEN}${BOLD}✓ Claude Voice installed!${NC}"
+echo -e "${GREEN}${BOLD}✓ Simply Voice installed!${NC}"
 echo ""
 echo -e "  ${BOLD}TTS${NC}: Claude speaks responses aloud (automatic via Stop hook)"
 echo -e "  ${BOLD}STT${NC}: Hold a key to dictate instead of typing"
 echo -e "  ${BOLD}Indicator${NC}: Menubar icon auto-launches with the daemon"
 echo ""
 echo -e "  To start everything (daemon + indicator):"
-echo -e "    ${CYAN}python3 ~/claude-voice/voice_daemon.py${NC}"
+echo -e "    ${CYAN}python3 ~/simply-voice/voice_daemon.py${NC}"
 echo ""
 echo -e "  ${YELLOW}Restart Claude Code if it's already running.${NC}"
 echo ""
